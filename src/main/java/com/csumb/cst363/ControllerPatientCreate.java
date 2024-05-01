@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,28 +40,44 @@ public class ControllerPatientCreate {
 	 */
 	@PostMapping("/patient/new")
 	public String createPatient(Patient p, Model model) {
-		
+
 		System.out.println("createPatient "+p);  // debug
 
 		// TODO
-
 		// get a connection to the database
-		// validate the doctor's last name and obtain the doctor id
-		// insert the patient profile into the patient table
-		// obtain the generated id for the patient and update patient object
+		try (Connection con = getConnection();) {
+			// validate the doctor's last name and obtain the doctor id
+			// create the query statement
+			PreparedStatement ps = con.prepareStatement("select doctor_id from doctor where last_name = ?",
+					Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, p.getPrimaryName());
+			ps.executeUpdate();
+			ResultSet rs = ps.getGeneratedKeys();
+			String doctorId;
 
-		p.setId(123456);
+			if (rs.next()) {
+				doctorId = rs.getString(1);
+			} else {
+				throw new NoSuchElementException();
+			};
 
-		// display message and patient information
-		model.addAttribute("message", "Registration successful.");
-		model.addAttribute("patient", p);
-		return "patient_show";
+			// insert the patient profile into the patient table
+			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physicican_id, ssn, first_name, last_name, data_of_birth, street_address) values (?,?,?,?,?,?)",
+					Statement.RETURN_GENERATED_KEYS);
 
-		// if there is error
-		// model.addAttribute("message",  <error message>);
-		// model.addAttribute("patient", p);
-		// return "patient_register";
+			// obtain the generated id for the patient and update patient object
+			p.setId(123456);
 
+			// display message and patient information
+			model.addAttribute("message", "Registration successful.");
+			model.addAttribute("patient", p);
+			return "patient_show";
+		} catch (SQLException e) {
+			// if there is error
+			model.addAttribute("message",  "Registration unsuccessful.");
+			model.addAttribute("patient", p);
+			return "patient_register";
+		}
 	}
 	
 	/*
