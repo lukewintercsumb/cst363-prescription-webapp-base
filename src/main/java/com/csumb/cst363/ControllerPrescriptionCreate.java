@@ -53,6 +53,7 @@ public class ControllerPrescriptionCreate {
 		 * 7. Update prescription object and return
 		 */
 
+		//BOILER CODE
 		model.addAttribute("message", "Prescription created.");
 		model.addAttribute("prescription", p);
 		return "prescription_show";
