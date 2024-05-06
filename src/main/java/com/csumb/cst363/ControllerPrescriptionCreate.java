@@ -36,7 +36,7 @@ public class ControllerPrescriptionCreate {
 	 * Doctor creates a prescription.
 	 */
 	@PostMapping("/prescription")
-	public String createPrescription(Prescription p, Model model) {
+	public String createPrescription(Prescription p, Model model) throws SQLException {
 
 		System.out.println("createPrescription " + p);
 
@@ -44,7 +44,7 @@ public class ControllerPrescriptionCreate {
 
 		/*-
 		 * Process the new prescription form. 
-		 * 1. Obtain connection to database. 
+		 * 1. Obtain connection to database.
 		 * 2. Validate that doctor id and name exists 
 		 * 3. Validate that patient id and name exists 
 		 * 4. Validate that Drug name exists and obtain drug id. 
@@ -52,6 +52,20 @@ public class ControllerPrescriptionCreate {
 		 * 6. Get generated value for rxid 
 		 * 7. Update prescription object and return
 		 */
+		//Obtain connection to database.
+		Connection pConnection = null;
+		try {
+			pConnection= getConnection();
+		} catch (NullPointerException | SQLException e){
+			System.out.println("Not great thing happened. UH OH.");
+		}
+		//Validate that doctor id and name exists
+		PreparedStatement preparedStatement = pConnection.prepareStatement("SELECT doctor_id, name " +
+				"FROM doctor " +
+				"WHERE doctor_id = ? AND name = ?");
+		preparedStatement.setInt(1, p.getDoctor_id());
+		//TODO fix this
+		preparedStatement.setString(1,p.getDoctorFirstName() + " " + p.getDoctorLastName());
 
 		//BOILER CODE
 		model.addAttribute("message", "Prescription created.");
