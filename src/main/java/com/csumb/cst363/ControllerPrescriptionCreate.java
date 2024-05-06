@@ -40,7 +40,7 @@ public class ControllerPrescriptionCreate {
 
 		System.out.println("createPrescription " + p);
 
-		// TODO
+		//TODO
 
 		/*-
 		 * Process the new prescription form. 
@@ -67,6 +67,7 @@ public class ControllerPrescriptionCreate {
 		//TODO fix this
 		preparedStatement.setString(1,p.getDoctorFirstName() + " " + p.getDoctorLastName());
 
+		//BOILER CODE
 		model.addAttribute("message", "Prescription created.");
 		model.addAttribute("prescription", p);
 		return "prescription_show";
