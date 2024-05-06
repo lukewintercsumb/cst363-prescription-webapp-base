@@ -24,3 +24,6 @@ hs_err_pid*
 replay_pid*
 
 #
+.idea/compiler.xml
+.idea/misc.xml
+.idea/modules.xml

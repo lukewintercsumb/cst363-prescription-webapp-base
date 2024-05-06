@@ -58,15 +58,25 @@ public class ControllerPatientCreate {
 			if (rs.next()) {
 				doctorId = rs.getString(1);
 			} else {
-				throw new NoSuchElementException();
+				throw new SQLException();
 			};
 
 			// insert the patient profile into the patient table
-			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physicican_id, ssn, first_name, last_name, data_of_birth, street_address) values (?,?,?,?,?,?)",
+			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physicican_id, ssn, first_name, last_name, date_of_birth, street_address) values (?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
+			psCreate.setString(1, doctorId);
+			psCreate.setString(1, p.getSsn());
+			psCreate.setString(1, p.getFirst_name());
+			psCreate.setString(1, p.getLast_name());
+			psCreate.setString(1, p.getBirthdate());
+			psCreate.setString(1, p.getStreet());
+			// TODO: insert the remaining fields for the address
 
 			// obtain the generated id for the patient and update patient object
-			p.setId(123456);
+			ResultSet generatedKeys = psCreate.getGeneratedKeys();
+			if (generatedKeys.next()) {
+				p.setId(generatedKeys.getInt(1));
+			}
 
 			// display message and patient information
 			model.addAttribute("message", "Registration successful.");
