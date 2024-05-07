@@ -63,7 +63,12 @@ public class ControllerPrescriptionFill {
 
 		// get prescription information for the rxid value and patient last name from
 		// prescription object.
-		ps = con.prepareStatement("SELECT * FROM prescriptions WHERE rxid = ? AND patientLastName = ?");
+//		ps = con.prepareStatement("SELECT * FROM prescriptions WHERE rxid = ? AND patientLastName = ?");
+//		ps.setString(1, p.getRxid());
+//		ps.setString(2, p.getPatientLastName());
+//		rs = ps.executeQuery();
+
+		ps = con.prepareStatement("SELECT * FROM prescriptions WHERE rx_id = ? AND prescrption_patient_id = (SELECT patient_id FROM patient WHERE last_name = ?)");
 		ps.setString(1, p.getRxid());
 		ps.setString(2, p.getPatientLastName());
 		rs = ps.executeQuery();
@@ -81,7 +86,13 @@ public class ControllerPrescriptionFill {
 				throw new IllegalArgumentException("Prescription not found.");
 			}
 		// update prescription table row with pharmacy id, fill date.
-	ps = con.prepareStatement("UPDATE prescriptions SET pharmacyID = ?, dateFilled = ? WHERE rxid = ?");
+//	ps = con.prepareStatement("UPDATE prescriptions SET pharmacyID = ?, dateFilled = ? WHERE rxid = ?");
+//	ps.setInt(1, p.getPharmacyID());
+//	ps.setString(2, LocalDate.now().toString());
+//	ps.setString(3, p.getRxid());
+//	ps.executeUpdate();
+
+	ps = con.prepareStatement("UPDATE prescriptions SET pharmacyID = ?, dateFilled = ? WHERE rx_id = ?");
 	ps.setInt(1, p.getPharmacyID());
 	ps.setString(2, LocalDate.now().toString());
 	ps.setString(3, p.getRxid());

@@ -1,10 +1,7 @@
 package com.csumb.cst363;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,29 +45,32 @@ public class ControllerPatientCreate {
 		try (Connection con = getConnection();) {
 			// validate the doctor's last name and obtain the doctor id
 			// create the query statement
-			PreparedStatement ps = con.prepareStatement("select doctor_id from doctor where last_name = ?",
-					Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement ps = con.prepareStatement("select doctor_id from doctor where last_name = ?");
 			ps.setString(1, p.getPrimaryName());
-			ps.executeUpdate();
-			ResultSet rs = ps.getGeneratedKeys();
+			ResultSet rs = ps.executeQuery();
 			String doctorId;
 
 			if (rs.next()) {
-				doctorId = rs.getString(1);
+				doctorId = rs.getString("doctor_id");
 			} else {
-				throw new SQLException();
-			};
+				// Handle the case where no matching doctor is found
+				model.addAttribute("message", "No doctor found with the last name: " + p.getPrimaryName());
+				model.addAttribute("patient", p);
+				return "patient_register";
+			}
 
 			// insert the patient profile into the patient table
-			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physicican_id, ssn, first_name, last_name, date_of_birth, street_address) values (?,?,?,?,?,?)",
+			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physician_id, ssn, first_name, last_name, date_of_birth, street_address) values (?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			psCreate.setString(1, doctorId);
-			psCreate.setString(1, p.getSsn());
-			psCreate.setString(1, p.getFirst_name());
-			psCreate.setString(1, p.getLast_name());
-			psCreate.setString(1, p.getBirthdate());
-			psCreate.setString(1, p.getStreet());
+			psCreate.setString(2, p.getSsn());
+			psCreate.setString(3, p.getFirst_name());
+			psCreate.setString(4, p.getLast_name());
+			psCreate.setString(5, p.getBirthdate());
+			psCreate.setString(6, p.getStreet());
 			// TODO: insert the remaining fields for the address
+
+			psCreate.executeUpdate();
 
 			// obtain the generated id for the patient and update patient object
 			ResultSet generatedKeys = psCreate.getGeneratedKeys();
@@ -81,9 +81,12 @@ public class ControllerPatientCreate {
 			// display message and patient information
 			model.addAttribute("message", "Registration successful.");
 			model.addAttribute("patient", p);
+			System.out.println("success!");
 			return "patient_show";
 		} catch (SQLException e) {
 			// if there is error
+			System.out.println(e);
+			System.out.println("error");
 			model.addAttribute("message",  "Registration unsuccessful.");
 			model.addAttribute("patient", p);
 			return "patient_register";
@@ -130,7 +133,7 @@ public class ControllerPatientCreate {
 
 
 	private Connection getConnection() throws SQLException {
-		Connection conn = jdbcTemplate.getDataSource().getConnection();
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "CT$*mv1RK$^$y%&wR18T");
 		return conn;
 	}
 
