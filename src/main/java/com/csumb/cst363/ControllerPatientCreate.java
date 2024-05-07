@@ -65,11 +65,11 @@ public class ControllerPatientCreate {
 			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physicican_id, ssn, first_name, last_name, date_of_birth, street_address) values (?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			psCreate.setString(1, doctorId);
-			psCreate.setString(1, p.getSsn());
-			psCreate.setString(1, p.getFirst_name());
-			psCreate.setString(1, p.getLast_name());
-			psCreate.setString(1, p.getBirthdate());
-			psCreate.setString(1, p.getStreet());
+			psCreate.setString(2, p.getSsn());
+			psCreate.setString(3, p.getFirst_name());
+			psCreate.setString(4, p.getLast_name());
+			psCreate.setString(5, p.getBirthdate());
+			psCreate.setString(6, p.getStreet());
 			// TODO: insert the remaining fields for the address
 
 			// obtain the generated id for the patient and update patient object
