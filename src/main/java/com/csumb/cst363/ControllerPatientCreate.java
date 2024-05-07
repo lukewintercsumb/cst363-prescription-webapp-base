@@ -60,7 +60,7 @@ public class ControllerPatientCreate {
 			}
 
 			// insert the patient profile into the patient table
-			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physicican_id, ssn, first_name, last_name, date_of_birth, street_address) values (?,?,?,?,?,?)",
+			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physician_id, ssn, first_name, last_name, date_of_birth, street_address) values (?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			psCreate.setString(1, doctorId);
 			psCreate.setString(2, p.getSsn());
@@ -69,6 +69,8 @@ public class ControllerPatientCreate {
 			psCreate.setString(5, p.getBirthdate());
 			psCreate.setString(6, p.getStreet());
 			// TODO: insert the remaining fields for the address
+
+			psCreate.executeUpdate();
 
 			// obtain the generated id for the patient and update patient object
 			ResultSet generatedKeys = psCreate.getGeneratedKeys();
@@ -79,10 +81,12 @@ public class ControllerPatientCreate {
 			// display message and patient information
 			model.addAttribute("message", "Registration successful.");
 			model.addAttribute("patient", p);
+			System.out.println("success!");
 			return "patient_show";
 		} catch (SQLException e) {
 			// if there is error
-			System.out.println(Arrays.toString(e.getStackTrace()));
+			System.out.println(e);
+			System.out.println("error");
 			model.addAttribute("message",  "Registration unsuccessful.");
 			model.addAttribute("patient", p);
 			return "patient_register";
@@ -129,7 +133,7 @@ public class ControllerPatientCreate {
 
 
 	private Connection getConnection() throws SQLException {
-		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/", "root", "CT$*mv1RK$^$y%&wR18T");
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydb", "root", "CT$*mv1RK$^$y%&wR18T");
 		return conn;
 	}
 
