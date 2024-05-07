@@ -1,10 +1,7 @@
 package com.csumb.cst363;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +45,9 @@ public class ControllerPatientCreate {
 		try (Connection con = getConnection();) {
 			// validate the doctor's last name and obtain the doctor id
 			// create the query statement
-			PreparedStatement ps = con.prepareStatement("select doctor_id from doctor where last_name = ?",
-					Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement ps = con.prepareStatement("select doctor_id from doctor where last_name = ?");
 			ps.setString(1, p.getPrimaryName());
 			ps.executeUpdate();
-			ResultSet rs = ps.getGeneratedKeys();
 			String doctorId;
 
 			if (rs.next()) {
@@ -84,6 +79,7 @@ public class ControllerPatientCreate {
 			return "patient_show";
 		} catch (SQLException e) {
 			// if there is error
+			System.out.println(Arrays.toString(e.getStackTrace()));
 			model.addAttribute("message",  "Registration unsuccessful.");
 			model.addAttribute("patient", p);
 			return "patient_register";
@@ -130,7 +126,7 @@ public class ControllerPatientCreate {
 
 
 	private Connection getConnection() throws SQLException {
-		Connection conn = jdbcTemplate.getDataSource().getConnection();
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/", "root", "CT$*mv1RK$^$y%&wR18T");
 		return conn;
 	}
 
