@@ -69,7 +69,8 @@ public class ControllerPrescriptionCreate {
 	 */
 
 	private Connection getConnection() throws SQLException {
-		Connection conn = jdbcTemplate.getDataSource().getConnection();
+		Connection conn = jdbcTemplate.getDataSource().getConnection(
+				"jdbc:mysql://localhost:3306/?user=root", "CT$*mv1RK$^$y%&wR18T");
 		return conn;
 	}
 	
