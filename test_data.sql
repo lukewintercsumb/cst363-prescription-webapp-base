@@ -1,6 +1,7 @@
 USE mydb;
 
 SELECT * FROM patient;
+SELECT * FROM refill;
 
 INSERT INTO doctor
 (doctor_id, ssn, first_name, last_name, specialty, first_year_practice)
@@ -47,3 +48,15 @@ VALUES
 (2, 3, 34.00, 100),
 (3, 1, 87.00, 24),
 (3,2, 90.00, 34);
+
+INSERT INTO prescription
+(rx_id, prescribing_doctor_id, prescrption_patient_id, drug_id, drug_quantity, max_refills, total_cost)
+VALUES
+(1, 1, 1, 1, 5, 3, 100); 
+
+SELECT * FROM patient;
+SELECT * FROM doctor;
+SELECT * FROM prescription;
+
+ALTER TABLE patient
+MODIFY COLUMN patient_id INT AUTO_INCREMENT;
