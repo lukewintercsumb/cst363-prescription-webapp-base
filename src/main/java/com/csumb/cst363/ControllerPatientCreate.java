@@ -60,7 +60,7 @@ public class ControllerPatientCreate {
 			}
 
 			// insert the patient profile into the patient table
-			PreparedStatement psCreate = con.prepareStatement("insert into patient (primary_physician_id, ssn, first_name, last_name, date_of_birth, street_address) values (?,?,?,?,?,?)",
+			PreparedStatement psCreate = con.prepareStatement("insert into patient (patient_id, primary_physician_id, ssn, first_name, last_name, date_of_birth, street_address) values (5,?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			psCreate.setString(1, doctorId);
 			psCreate.setString(2, p.getSsn());
